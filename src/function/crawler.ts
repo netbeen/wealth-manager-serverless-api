@@ -8,15 +8,15 @@ import {
 import { Context } from '@midwayjs/faas';
 
 @Provide()
-export class HelloHTTPService {
+export class CrawlerHTTPService {
   @Inject()
   ctx: Context;
 
   @ServerlessTrigger(ServerlessTriggerType.HTTP, {
-    path: '/',
+    path: '/fund/unitPrice',
     method: 'get',
   })
-  async handleHTTPEvent(@Query() name = 'midwayjs') {
-    return `Hello ${name}`;
+  async handleHTTPEvent(@Query() identifier) {
+    return `Hello ${identifier}`;
   }
 }
