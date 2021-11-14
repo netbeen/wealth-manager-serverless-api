@@ -20,7 +20,7 @@
     "@midwayjs/core": "^2.3.0",
     "@midwayjs/decorator": "^2.3.0",
     "@midwayjs/faas": "^2.0.0",
-    "fund-tools": "0.0.10"
+    "fund-tools": "0.0.13"
   },
   "devDependencies": {
     "@midwayjs/cli": "^1.2.45",

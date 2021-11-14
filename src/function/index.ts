@@ -6,7 +6,6 @@ import {
   Query,
 } from '@midwayjs/decorator';
 import { Context } from '@midwayjs/faas';
-import { fetchUnitPriceByIdentifier } from 'fund-tools';
 
 @Provide()
 export class IndexHTTPService {
@@ -18,11 +17,6 @@ export class IndexHTTPService {
     method: 'get',
   })
   async handleHTTPEvent(@Query() name = 'midwayjs') {
-    console.log(
-      (await fetchUnitPriceByIdentifier('160119')).map(
-        item => `${item.date.format()} ${item.price}`
-      )
-    );
     return `Hello ${name}`;
   }
 }

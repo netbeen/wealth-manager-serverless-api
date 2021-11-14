@@ -6,6 +6,7 @@ import {
   Query,
 } from '@midwayjs/decorator';
 import { Context } from '@midwayjs/faas';
+import { fetchUnitPriceByIdentifier } from 'fund-tools';
 
 @Provide()
 export class CrawlerHTTPService {
@@ -17,6 +18,7 @@ export class CrawlerHTTPService {
     method: 'get',
   })
   async handleHTTPEvent(@Query() identifier) {
-    return `Hello ${identifier}`;
+    const result = await fetchUnitPriceByIdentifier(identifier);
+    return result;
   }
 }
