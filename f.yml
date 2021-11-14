@@ -1,9 +1,14 @@
 service:
-  name: midway-http
+  name: wealth-manager-serverless-api
 
 provider:
-  name: aliyun
+  name: tencent
+  runtime: nodejs12
+  timeout: 60 # 单位秒
+  region: ap-hongkong
+  serviceId: service-0d8643vs
 
-custom:
-  customDomain:
-    domainName: auto
+aggregation:
+  all:
+    functionsPattern:
+      '*'
