@@ -20,6 +20,7 @@
     "@midwayjs/core": "^2.3.0",
     "@midwayjs/decorator": "^2.3.0",
     "@midwayjs/faas": "^2.0.0",
+    "@midwayjs/fcli-plugin-scf": "^1.2.90",
     "@midwayjs/typegoose": "^2.13.5",
     "@typegoose/typegoose": "^7.6.3",
     "fund-tools": "0.0.13",
