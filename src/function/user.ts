@@ -19,12 +19,34 @@ export class UserHTTPService {
   userModel: Model<User>;
 
   @ServerlessTrigger(ServerlessTriggerType.HTTP, {
-    path: '/user',
+    path: '/user/getByIdentifier',
     method: 'get',
   })
-  async handleHTTPEvent(@Query() identifier) {
+  async getByIdentifier(@Query() identifier) {
+    console.log('input identifier', identifier);
     try {
       const user = await this.userModel.findById(identifier).exec();
+      if (!user) {
+        return response404('');
+      }
+      return response200({ _id: user._id, username: user.username });
+    } catch (e) {
+      return response404('');
+    }
+  }
+
+  @ServerlessTrigger(ServerlessTriggerType.HTTP, {
+    path: '/user/getByIdentifierAndPasswordHash',
+    method: 'get',
+  })
+  async getByIdentifierAndPasswordHash(
+    @Query() username,
+    @Query() passwordHash
+  ) {
+    try {
+      const user = await this.userModel
+        .findOne({ username, passwordHash })
+        .exec();
       if (!user || !user.username) {
         return response404('');
       }

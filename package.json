@@ -21,9 +21,9 @@
     "@midwayjs/decorator": "^2.3.0",
     "@midwayjs/faas": "^2.0.0",
     "@midwayjs/typegoose": "^2.13.5",
-    "@typegoose/typegoose": "^9.2.0",
+    "@typegoose/typegoose": "^7.6.3",
     "fund-tools": "0.0.13",
-    "mongoose": "^6.0.13"
+    "mongoose": "^5.13.13"
   },
   "devDependencies": {
     "@midwayjs/cli": "^1.2.45",
