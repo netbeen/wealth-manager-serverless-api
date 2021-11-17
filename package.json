@@ -23,7 +23,7 @@
     "@midwayjs/fcli-plugin-scf": "^1.2.90",
     "@midwayjs/typegoose": "^2.13.5",
     "@typegoose/typegoose": "^7.6.3",
-    "fund-tools": "0.0.13",
+    "fund-tools": "^0.0.16",
     "mongoose": "^5.13.13"
   },
   "devDependencies": {
