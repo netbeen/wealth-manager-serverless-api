@@ -23,7 +23,6 @@ export class UserHTTPService {
     method: 'get',
   })
   async getByIdentifier(@Query() identifier) {
-    console.log('input identifier', identifier);
     try {
       const user = await this.userModel.findById(identifier).exec();
       if (!user) {
@@ -35,6 +34,7 @@ export class UserHTTPService {
     }
   }
 
+  // For login only
   @ServerlessTrigger(ServerlessTriggerType.HTTP, {
     path: '/user/getByIdentifierAndPasswordHash',
     method: 'get',

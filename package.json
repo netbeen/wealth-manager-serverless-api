@@ -10,13 +10,14 @@
     "midway"
   ],
   "scripts": {
-    "dev": "cross-env NODE_ENV=local midway-bin dev --ts",
-    "test": "cross-env midway-bin test --ts",
+    "dev": "sh devEnvironmentVariablesChecker.sh && cross-env NODE_ENV=local midway-bin dev --ts --port=5002",
+    "test": "sh deployEnvironmentVariablesChecker.sh && cross-env midway-bin test --ts",
     "deploy": "cross-env UDEV_NODE_ENV=production midway-bin deploy",
     "lint": "mwts check",
     "lint:fix": "mwts fix"
   },
   "dependencies": {
+    "@koa/cors": "^3.1.0",
     "@midwayjs/core": "^2.3.0",
     "@midwayjs/decorator": "^2.3.0",
     "@midwayjs/faas": "^2.0.0",
