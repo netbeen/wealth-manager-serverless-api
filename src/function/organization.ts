@@ -5,12 +5,11 @@ import {
   ServerlessTriggerType,
   Config,
   ALL,
-  Query,
 } from '@midwayjs/decorator';
 import { Context } from '@midwayjs/faas';
 import { Model } from 'mongoose';
 import { InjectEntityModel } from '@midwayjs/typegoose';
-import { response200, response403, response404 } from '../utils/response';
+import { response200, response401, response404 } from '../utils/response';
 import { UserService } from '../service/user';
 import { Organization } from '../entity/organization';
 
@@ -29,12 +28,12 @@ export class OrganizationHTTPService {
     path: '/organization/getAvailableOrganizations',
     method: 'get',
   })
-  async getAvailableOrganizations(@Query() session) {
-    const loginUser = await this.userService.getUserFromSession(
-      session
+  async getAvailableOrganizations() {
+    const loginUser = await this.userService.getUserFromToken(
+      this.ctx.req.headers['x-wm-token']
     );
     if (!loginUser) {
-      return response403('');
+      return response401('');
     }
     try {
       const [

@@ -12,3 +12,8 @@ export const response403 = (message: string) => ({
   code: 403,
   message,
 });
+
+export const response401 = (message: string) => ({
+  code: 401,
+  message,
+});

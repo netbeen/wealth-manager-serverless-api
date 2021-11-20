@@ -11,8 +11,8 @@
   ],
   "scripts": {
     "dev": "sh devEnvironmentVariablesChecker.sh && cross-env NODE_ENV=local midway-bin dev --ts --port=5002",
-    "test": "sh deployEnvironmentVariablesChecker.sh && cross-env midway-bin test --ts",
-    "deploy": "cross-env UDEV_NODE_ENV=production midway-bin deploy",
+    "test": "cross-env midway-bin test --ts",
+    "deploy": "sh deployEnvironmentVariablesChecker.sh && cross-env UDEV_NODE_ENV=production midway-bin deploy",
     "lint": "mwts check",
     "lint:fix": "mwts fix"
   },
@@ -25,7 +25,9 @@
     "@midwayjs/typegoose": "^2.13.5",
     "@typegoose/typegoose": "^7.6.3",
     "fund-tools": "^0.0.16",
+    "http-proxy-middleware": "^2.0.1",
     "jsonwebtoken": "^8.5.1",
+    "koa2-connect": "^1.0.2",
     "mongoose": "^5.13.13"
   },
   "devDependencies": {
