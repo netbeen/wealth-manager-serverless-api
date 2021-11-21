@@ -3,18 +3,13 @@ import {
   Inject,
   ServerlessTrigger,
   ServerlessTriggerType,
-  Config,
-  ALL,
   Body,
 } from '@midwayjs/decorator';
 import { Context } from '@midwayjs/faas';
-import { Model } from 'mongoose';
-import { InjectEntityModel } from '@midwayjs/typegoose';
 import { response401, response403 } from '../utils/response';
 import { UserService } from '../service/user';
 import { OrganizationService } from '../service/organization';
 import { TransactionService } from '../service/transaction';
-import { Organization } from '../entity/organization';
 
 @Provide()
 export class TransactionOrganizationHTTPService {
@@ -26,10 +21,6 @@ export class TransactionOrganizationHTTPService {
   organizationService: OrganizationService;
   @Inject()
   transactionService: TransactionService;
-  @InjectEntityModel(Organization)
-  organizationModel: Model<Organization>;
-  @Config(ALL)
-  allConfig;
 
   @ServerlessTrigger(ServerlessTriggerType.HTTP, {
     path: '/fund/transaction',
