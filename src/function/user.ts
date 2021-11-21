@@ -3,14 +3,14 @@ import {
   Inject,
   ServerlessTrigger,
   ServerlessTriggerType,
-  Query,
   Body,
 } from '@midwayjs/decorator';
 import { Context } from '@midwayjs/faas';
 import { Model } from 'mongoose';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { User } from '../entity/user';
-import { response200, response404 } from '../utils/response';
+import { response200, response401, response404 } from '../utils/response';
+import { UserService } from '../service/user';
 const jwt = require('jsonwebtoken');
 
 @Provide()
@@ -19,21 +19,37 @@ export class UserHTTPService {
   ctx: Context;
   @InjectEntityModel(User)
   userModel: Model<User>;
+  @Inject()
+  userService: UserService;
+
+  // @ServerlessTrigger(ServerlessTriggerType.HTTP, {
+  //   path: '/user/getByIdentifier',
+  //   method: 'get',
+  // })
+  // async getByIdentifier(@Query() identifier) {
+  //   try {
+  //     const user = await this.userModel.findById(identifier).exec();
+  //     if (!user) {
+  //       return response404('');
+  //     }
+  //     return response200({ _id: user._id, username: user.username });
+  //   } catch (e) {
+  //     return response404('');
+  //   }
+  // }
 
   @ServerlessTrigger(ServerlessTriggerType.HTTP, {
-    path: '/user/getByIdentifier',
+    path: '/user/me',
     method: 'get',
   })
-  async getByIdentifier(@Query() identifier) {
-    try {
-      const user = await this.userModel.findById(identifier).exec();
-      if (!user) {
-        return response404('');
-      }
-      return response200({ _id: user._id, username: user.username });
-    } catch (e) {
-      return response404('');
+  async getByIdentifier() {
+    const loginUser = await this.userService.getUserFromToken(
+      this.ctx.req.headers['x-wm-token']
+    );
+    if (!loginUser) {
+      return response401('');
     }
+    return response200({ _id: loginUser._id, username: loginUser.username });
   }
 
   @ServerlessTrigger(ServerlessTriggerType.HTTP, {
@@ -41,7 +57,6 @@ export class UserHTTPService {
     method: 'post',
   })
   async login(@Body() username, @Body() passwordHash) {
-    console.log('login', username, passwordHash);
     try {
       const user = await this.userModel
         .findOne({ username, passwordHash })

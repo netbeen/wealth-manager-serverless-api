@@ -10,8 +10,13 @@ export class UserService {
   userModel: Model<User>;
 
   async getUserFromToken(token: string): Promise<User | null> {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const result = await this.userModel.findById(decoded._id).exec();
-    return result ?? null;
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const result = await this.userModel.findById(decoded._id).exec();
+      return result ?? null;
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
   }
 }
