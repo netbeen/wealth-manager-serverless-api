@@ -3,19 +3,22 @@ import { EntityModel } from '@midwayjs/typegoose';
 import { Schema } from 'mongoose';
 
 @EntityModel()
-export class Organization {
+export class Transaction {
   @prop()
   public _id: Schema.Types.ObjectId;
 
   @prop()
-  public adminList: Array<string>;
+  public commission: number;
 
   @prop()
-  public collaboratorList: Array<string>;
+  public date: string;
 
   @prop()
-  public visitorList: Array<string>;
+  public direction: string;
 
   @prop()
-  public name: string;
+  public volume: number;
+
+  @prop()
+  public transactionSet: string;
 }
