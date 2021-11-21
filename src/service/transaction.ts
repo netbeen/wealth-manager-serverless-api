@@ -1,8 +1,9 @@
-import { Provide } from '@midwayjs/decorator';
+import { Inject, Provide } from '@midwayjs/decorator';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { Model, Types } from 'mongoose';
 import { Transaction } from '../entity/transaction';
 import { TransactionSet } from '../entity/transactionSet';
+import { TransactionSetService } from './transactionSet';
 
 @Provide()
 export class TransactionService {
@@ -10,6 +11,8 @@ export class TransactionService {
   transactionModel: Model<Transaction>;
   @InjectEntityModel(TransactionSet)
   transactionSetModel: Model<TransactionSet>;
+  @Inject()
+  transactionSetService: TransactionSetService;
 
   async insertTransaction(
     target: string,
@@ -21,19 +24,12 @@ export class TransactionService {
     organizationId: string
   ): Promise<Transaction> {
     try {
-      let existedActiveTransactionSet = await this.transactionSetModel.findOne({
-        status: 'active',
-        target,
-      });
-      if (!existedActiveTransactionSet) {
-        existedActiveTransactionSet = await this.transactionSetModel.create({
-          _id: new Types.ObjectId(),
-          status: 'active',
+      const existedActiveTransactionSet =
+        await this.transactionSetService.findOrInsertTransactionSet(
           target,
-          organization: organizationId,
-        });
-      }
-      const transaction = await this.transactionModel.create({
+          organizationId
+        );
+      return await this.transactionModel.create({
         _id: new Types.ObjectId(),
         transactionSet: existedActiveTransactionSet._id,
         commission,
@@ -41,7 +37,6 @@ export class TransactionService {
         direction,
         volume,
       });
-      return transaction;
     } catch (e) {
       throw new Error(e);
     }
