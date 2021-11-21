@@ -88,7 +88,7 @@ export class OrganizationHTTPService {
           _id: organizationWithPermissions.organization._id,
           name: organizationWithPermissions.organization.name,
         },
-        permission: organizationWithPermissions.permissions,
+        permissions: organizationWithPermissions.permissions,
       });
     } catch (e) {
       return response401('');

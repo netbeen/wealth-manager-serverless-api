@@ -32,7 +32,7 @@ export class OrganizationService {
         permissions.push('Collaborator');
       }
       if (result.visitorList.includes(userId)) {
-        permissions.push('Admin');
+        permissions.push('Visitor');
       }
       return {
         organization: result ?? null,
