@@ -75,4 +75,20 @@ export class UserHTTPService {
       return response404('');
     }
   }
+
+  @ServerlessTrigger(ServerlessTriggerType.HTTP, {
+    path: '/user/register',
+    method: 'post',
+  })
+  async register(@Body() username, @Body() passwordHash) {
+    try {
+      const user = await this.userService.register(username, passwordHash);
+      return response200({
+        _id: user._id,
+        username: user.username,
+      });
+    } catch (e) {
+      return response404('');
+    }
+  }
 }

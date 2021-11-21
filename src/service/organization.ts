@@ -1,6 +1,6 @@
 import { Provide } from '@midwayjs/decorator';
 import { InjectEntityModel } from '@midwayjs/typegoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Organization } from '../entity/organization';
 
 export interface OrganizationPermissionType {
@@ -44,6 +44,25 @@ export class OrganizationService {
         organization: null,
         permissions: [],
       };
+    }
+  }
+
+  async createOrganization(
+    name: string,
+    userId: string
+  ): Promise<Organization> {
+    try {
+      const result = await this.organizationModel.create({
+        _id: new Types.ObjectId(),
+        name,
+        adminList: [userId],
+        collaboratorList: [],
+        visitorList: [],
+      });
+      return result;
+    } catch (e) {
+      console.log(e);
+      throw new Error(e);
     }
   }
 }
