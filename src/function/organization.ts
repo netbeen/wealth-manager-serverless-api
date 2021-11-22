@@ -1,17 +1,20 @@
 import {
-  Provide,
+  ALL,
+  Config,
   Inject,
+  Provide,
   ServerlessTrigger,
   ServerlessTriggerType,
-  Config,
-  ALL,
 } from '@midwayjs/decorator';
 import { Context } from '@midwayjs/faas';
 import { Model } from 'mongoose';
 import { InjectEntityModel } from '@midwayjs/typegoose';
-import { response200, response401, response404 } from '../utils/response';
+import { response200, response404 } from '../utils/response';
 import { UserService } from '../service/user';
-import { OrganizationService } from '../service/organization';
+import {
+  OrganizationPermission,
+  OrganizationService,
+} from '../service/organization';
 import { Organization } from '../entity/organization';
 
 @Provide()
@@ -32,26 +35,27 @@ export class OrganizationHTTPService {
     method: 'get',
   })
   async getAvailableOrganizations() {
-    const loginUser = await this.userService.getUserFromToken(
-      this.ctx.req.headers['x-wm-token']
-    );
-    if (!loginUser) {
-      return response401('');
+    const { result, errorResponse, user } =
+      await this.userService.checkLoginStatusAndOrganizationPermission(
+        this.ctx.req.headers,
+        null
+      );
+    if (!result) {
+      return errorResponse;
     }
+
     try {
       const [
         adminOrganizations,
         collaboratorOrganizations,
         visitorOrganizations,
       ] = await Promise.all([
+        this.organizationModel.find({ adminList: user._id.toString() }).exec(),
         this.organizationModel
-          .find({ adminList: loginUser._id.toString() })
+          .find({ collaboratorList: user._id.toString() })
           .exec(),
         this.organizationModel
-          .find({ collaboratorList: loginUser._id.toString() })
-          .exec(),
-        this.organizationModel
-          .find({ visitorList: loginUser._id.toString() })
+          .find({ visitorList: user._id.toString() })
           .exec(),
       ]);
       return response200(
@@ -71,27 +75,20 @@ export class OrganizationHTTPService {
     method: 'get',
   })
   async getCurrentOrganization() {
-    const loginUser = await this.userService.getUserFromToken(
-      this.ctx.req.headers['x-wm-token']
-    );
-    if (!loginUser || !loginUser._id) {
-      return response401('');
+    const { result, errorResponse, organization, permissionList } =
+      await this.userService.checkLoginStatusAndOrganizationPermission(
+        this.ctx.req.headers,
+        OrganizationPermission.Visitor
+      );
+    if (!result) {
+      return errorResponse;
     }
-    try {
-      const organizationWithPermissions =
-        await this.organizationService.getAndVerifyOrganizationFromToken(
-          this.ctx.req.headers['x-wm-organization'],
-          loginUser._id.toString()
-        );
-      return response200({
-        organization: {
-          _id: organizationWithPermissions.organization._id,
-          name: organizationWithPermissions.organization.name,
-        },
-        permissions: organizationWithPermissions.permissions,
-      });
-    } catch (e) {
-      return response401('');
-    }
+    return response200({
+      organization: {
+        _id: organization._id,
+        name: organization.name,
+      },
+      permissions: permissionList,
+    });
   }
 }

@@ -9,7 +9,7 @@ import { Context } from '@midwayjs/faas';
 import { Model } from 'mongoose';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { User } from '../entity/user';
-import { response200, response401, response404 } from '../utils/response';
+import { response200, response404 } from '../utils/response';
 import { UserService } from '../service/user';
 const jwt = require('jsonwebtoken');
 
@@ -22,34 +22,20 @@ export class UserHTTPService {
   @Inject()
   userService: UserService;
 
-  // @ServerlessTrigger(ServerlessTriggerType.HTTP, {
-  //   path: '/user/getByIdentifier',
-  //   method: 'get',
-  // })
-  // async getByIdentifier(@Query() identifier) {
-  //   try {
-  //     const user = await this.userModel.findById(identifier).exec();
-  //     if (!user) {
-  //       return response404('');
-  //     }
-  //     return response200({ _id: user._id, username: user.username });
-  //   } catch (e) {
-  //     return response404('');
-  //   }
-  // }
-
   @ServerlessTrigger(ServerlessTriggerType.HTTP, {
     path: '/user/me',
     method: 'get',
   })
   async getByIdentifier() {
-    const loginUser = await this.userService.getUserFromToken(
-      this.ctx.req.headers['x-wm-token']
-    );
-    if (!loginUser) {
-      return response401('');
+    const { result, errorResponse, user } =
+      await this.userService.checkLoginStatusAndOrganizationPermission(
+        this.ctx.headers,
+        null
+      );
+    if (!result) {
+      return errorResponse;
     }
-    return response200({ _id: loginUser._id, username: loginUser.username });
+    return response200({ _id: user._id, username: user.username });
   }
 
   @ServerlessTrigger(ServerlessTriggerType.HTTP, {

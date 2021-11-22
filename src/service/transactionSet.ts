@@ -29,12 +29,10 @@ export class TransactionSetService {
   }
 
   async getActiveTransactionSets(
-    target: string,
     organizationId: string
   ): Promise<Array<TransactionSet>> {
     return await this.transactionSetModel.find({
       status: 'active',
-      target,
       organization: organizationId,
     });
   }

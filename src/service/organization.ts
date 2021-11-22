@@ -3,9 +3,15 @@ import { InjectEntityModel } from '@midwayjs/typegoose';
 import { Model, Types } from 'mongoose';
 import { Organization } from '../entity/organization';
 
+export enum OrganizationPermission {
+  Admin = 'Admin',
+  Collaborator = 'Collaborator',
+  Visitor = 'Visitor',
+}
+
 export interface OrganizationPermissionType {
   organization: any;
-  permissions: Array<'Admin' | 'Collaborator' | 'Visitor'>;
+  permissions: Array<OrganizationPermission>;
 }
 
 @Provide()
@@ -26,13 +32,13 @@ export class OrganizationService {
         .exec();
       const permissions: OrganizationPermissionType['permissions'] = [];
       if (result.adminList.includes(userId)) {
-        permissions.push('Admin');
+        permissions.push(OrganizationPermission.Admin);
       }
       if (result.collaboratorList.includes(userId)) {
-        permissions.push('Collaborator');
+        permissions.push(OrganizationPermission.Collaborator);
       }
       if (result.visitorList.includes(userId)) {
-        permissions.push('Visitor');
+        permissions.push(OrganizationPermission.Visitor);
       }
       return {
         organization: result ?? null,

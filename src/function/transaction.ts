@@ -1,18 +1,21 @@
 import {
-  Provide,
+  Body,
+  Query,
   Inject,
+  Provide,
   ServerlessTrigger,
   ServerlessTriggerType,
-  Body,
 } from '@midwayjs/decorator';
 import { Context } from '@midwayjs/faas';
-import { response401, response403 } from '../utils/response';
 import { UserService } from '../service/user';
-import { OrganizationService } from '../service/organization';
+import {
+  OrganizationPermission,
+  OrganizationService,
+} from '../service/organization';
 import { TransactionService } from '../service/transaction';
 
 @Provide()
-export class TransactionOrganizationHTTPService {
+export class TransactionHTTPService {
   @Inject()
   ctx: Context;
   @Inject()
@@ -26,29 +29,20 @@ export class TransactionOrganizationHTTPService {
     path: '/fund/transaction',
     method: 'post',
   })
-  async getAvailableOrganizations(
+  async createTransaction(
     @Body() target,
     @Body() volume,
     @Body() commission,
     @Body() date,
     @Body() direction
   ) {
-    const loginUser = await this.userService.getUserFromToken(
-      this.ctx.req.headers['x-wm-token']
-    );
-    if (!loginUser) {
-      return response401('');
-    }
-    const organizationData =
-      await this.organizationService.getAndVerifyOrganizationFromToken(
-        this.ctx.req.headers['x-wm-organization'],
-        loginUser._id.toString()
+    const { result, errorResponse, user, organization } =
+      await this.userService.checkLoginStatusAndOrganizationPermission(
+        this.ctx.req.headers,
+        OrganizationPermission.Collaborator
       );
-    if (
-      !organizationData.permissions.includes('Admin') &&
-      !organizationData.permissions.includes('Collaborator')
-    ) {
-      return response403('');
+    if (!result) {
+      return errorResponse;
     }
     const transaction = this.transactionService.insertTransaction(
       target,
@@ -56,9 +50,26 @@ export class TransactionOrganizationHTTPService {
       commission,
       date,
       direction,
-      loginUser._id.toString(),
-      organizationData.organization._id.toString()
+      user._id.toString(),
+      organization._id.toString()
     );
+    return transaction;
+  }
+
+  @ServerlessTrigger(ServerlessTriggerType.HTTP, {
+    path: '/fund/transaction',
+    method: 'get',
+  })
+  async getTransaction(@Query() transactionSet) {
+    const { result, errorResponse } =
+      await this.userService.checkLoginStatusAndOrganizationPermission(
+        this.ctx.req.headers,
+        OrganizationPermission.Visitor
+      );
+    if (!result) {
+      return errorResponse;
+    }
+    const transaction = this.transactionService.findTransaction(transactionSet);
     return transaction;
   }
 }

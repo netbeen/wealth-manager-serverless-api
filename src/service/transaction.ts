@@ -41,4 +41,18 @@ export class TransactionService {
       throw new Error(e);
     }
   }
+
+  async findTransaction(
+    transactionSet: string | null
+  ): Promise<Array<Transaction>> {
+    const query: { transactionSet?: string } = {};
+    if (transactionSet) {
+      query.transactionSet = transactionSet;
+    }
+    try {
+      return await this.transactionModel.find(query);
+    } catch (e) {
+      throw new Error(e);
+    }
+  }
 }
