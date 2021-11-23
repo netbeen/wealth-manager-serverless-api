@@ -13,6 +13,7 @@ import {
   OrganizationService,
 } from '../service/organization';
 import { TransactionService } from '../service/transaction';
+import { response200 } from '../utils/response';
 
 @Provide()
 export class TransactionHTTPService {
@@ -71,5 +72,27 @@ export class TransactionHTTPService {
     }
     const transaction = this.transactionService.findTransaction(transactionSet);
     return transaction;
+  }
+
+  @ServerlessTrigger(ServerlessTriggerType.HTTP, {
+    path: '/fund/transaction/batchQuery',
+    method: 'get',
+  })
+  async getTransactionBatchQuery(@Query() transactionSetsString) {
+    const transactionSets = transactionSetsString.split(',');
+    const { result, errorResponse } =
+      await this.userService.checkLoginStatusAndOrganizationPermission(
+        this.ctx.req.headers,
+        OrganizationPermission.Visitor
+      );
+    if (!result) {
+      return errorResponse;
+    }
+    const transaction = await Promise.all(
+      transactionSets.map(transactionSet =>
+        this.transactionService.findTransaction(transactionSet)
+      )
+    );
+    return response200(transaction);
   }
 }
