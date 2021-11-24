@@ -13,7 +13,11 @@ import {
   fetchBasicInfoByIdentifier,
 } from 'fund-tools';
 import { CacheManager } from '@midwayjs/cache';
-import { response200 } from '../utils/response';
+import {
+  getCacheFirstArrayResource,
+  getCacheFirstObjectResource,
+  response200,
+} from '../utils/response';
 
 @Provide()
 export class CrawlerHTTPService {
@@ -51,22 +55,12 @@ export class CrawlerHTTPService {
     method: 'get',
   })
   async fetchBasicInfo(@Query() identifier) {
-    const local = process.env.NODE_ENV === 'local';
-    if (local) {
-      const remoteResult = await fetchBasicInfoByIdentifier(identifier);
-      return { ...remoteResult, from: 'remote' };
-    } else {
-      const cacheKey = `fetchBasicInfo${identifier}`;
-      const cacheResult = (await this.cache.get(cacheKey)) as { name: string };
-      if (cacheResult) {
-        return { ...cacheResult, from: 'cache' };
-      }
-      const remoteResult = await fetchBasicInfoByIdentifier(identifier);
-      await this.cache.set(cacheKey, remoteResult, {
-        ttl: 3600,
-      });
-      return { ...remoteResult, from: 'remote' };
-    }
+    return await getCacheFirstObjectResource(
+      this.cache,
+      `fetchBasicInfo${identifier}`,
+      fetchBasicInfoByIdentifier(identifier),
+      3600
+    );
   }
 
   @ServerlessTrigger(ServerlessTriggerType.HTTP, {
@@ -75,23 +69,28 @@ export class CrawlerHTTPService {
   })
   async batchFetchBasicInfoUnitPriceSplitDividend(@Query() identifiersString) {
     const identifiers = identifiersString.split(',');
-    const basicInfos = await Promise.all(
-      identifiers.map(identifier => fetchBasicInfoByIdentifier(identifier))
+    const { data, from } = await getCacheFirstArrayResource(
+      this.cache,
+      `batchFetchBasicInfoUnitPriceSplitDividend${identifiersString}`,
+      Promise.all([
+        ...identifiers.map(identifier =>
+          fetchBasicInfoByIdentifier(identifier)
+        ),
+        ...identifiers.map(identifier =>
+          fetchUnitPriceByIdentifier(identifier)
+        ),
+        ...identifiers.map(identifier => fetchSplitByIdentifier(identifier)),
+        ...identifiers.map(identifier => fetchDividendByIdentifier(identifier)),
+      ]),
+      3600
     );
-    const unitPrices = await Promise.all(
-      identifiers.map(identifier => fetchUnitPriceByIdentifier(identifier))
-    );
-    const splits = await Promise.all(
-      identifiers.map(identifier => fetchSplitByIdentifier(identifier))
-    );
-    const dividends = await Promise.all(
-      identifiers.map(identifier => fetchDividendByIdentifier(identifier))
-    );
+    const identifierCount = identifiers.length;
     return response200({
-      basicInfos,
-      unitPrices,
-      splits,
-      dividends,
+      basicInfos: data.slice(0, identifierCount),
+      unitPrices: data.slice(identifierCount, identifierCount * 2),
+      splits: data.slice(identifierCount * 2, identifierCount * 3),
+      dividends: data.slice(identifierCount * 3, identifierCount * 4),
+      from,
     });
   }
 }
