@@ -26,6 +26,14 @@ export class TransactionHTTPService {
   @Inject()
   transactionService: TransactionService;
 
+  /**
+   * 添加交易记录
+   * @param target
+   * @param volume
+   * @param commission
+   * @param date
+   * @param direction
+   */
   @ServerlessTrigger(ServerlessTriggerType.HTTP, {
     path: '/fund/transaction',
     method: 'post',
