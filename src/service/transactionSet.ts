@@ -3,24 +3,26 @@ import { InjectEntityModel } from '@midwayjs/typegoose';
 import { Model, Types } from 'mongoose';
 import { TransactionSet } from '../entity/transactionSet';
 
+export enum TransactionSetStatus {
+  Active = 'active',
+  Archived = 'archived',
+}
+
 @Provide()
 export class TransactionSetService {
   @InjectEntityModel(TransactionSet)
   transactionSetModel: Model<TransactionSet>;
 
-  async findOrInsertTransactionSet(
-    target: string,
-    organizationId: string
-  ): Promise<TransactionSet> {
+  async findOrInsertTransactionSet(target: string, organizationId: string): Promise<TransactionSet> {
     let existedActiveTransactionSet = await this.transactionSetModel.findOne({
-      status: 'active',
+      status: TransactionSetStatus.Active,
       target,
       organization: organizationId,
     });
     if (!existedActiveTransactionSet) {
       existedActiveTransactionSet = await this.transactionSetModel.create({
         _id: new Types.ObjectId(),
-        status: 'active',
+        status: TransactionSetStatus.Active,
         target,
         organization: organizationId,
       });
@@ -28,11 +30,16 @@ export class TransactionSetService {
     return existedActiveTransactionSet;
   }
 
-  async getActiveTransactionSets(
-    organizationId: string
-  ): Promise<Array<TransactionSet>> {
+  async getActiveTransactionSets(organizationId: string): Promise<Array<TransactionSet>> {
     return await this.transactionSetModel.find({
-      status: 'active',
+      status: TransactionSetStatus.Active,
+      organization: organizationId,
+    });
+  }
+
+  async getArchivedTransactionSets(organizationId: string): Promise<Array<TransactionSet>> {
+    return await this.transactionSetModel.find({
+      status: TransactionSetStatus.Archived,
       organization: organizationId,
     });
   }

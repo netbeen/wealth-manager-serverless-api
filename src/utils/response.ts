@@ -20,6 +20,11 @@ export const response401 = (message: string) => ({
   message,
 });
 
+export const response400 = (message: string) => ({
+  code: 400,
+  message,
+});
+
 export const getCacheFirstObjectResource = async (
   cacheInstance: CacheManager,
   cacheKey: string,
