@@ -1,7 +1,7 @@
-import { Provide } from '@midwayjs/decorator';
-import { InjectEntityModel } from '@midwayjs/typegoose';
-import { Model, Types } from 'mongoose';
-import { TransactionSet } from '../entity/transactionSet';
+import { Provide } from "@midwayjs/decorator";
+import { InjectEntityModel } from "@midwayjs/typegoose";
+import { Model, Types } from "mongoose";
+import { TransactionSet } from "../entity/transactionSet";
 
 export enum TransactionSetStatus {
   Active = 'active',
@@ -30,14 +30,16 @@ export class TransactionSetService {
     return existedActiveTransactionSet;
   }
 
+  async getTransactionSetById(id: string, organizationId: string): Promise<TransactionSet> {
+    // @ts-ignore
+    return await this.transactionSetModel.findOne({ _id: id, organization: organizationId });
+  }
+
   async archiveTransactionSet(transactionSetId: string): Promise<void> {
     // @ts-ignore
-    this.transactionSetModel.updateOne({ _id: transactionSetId },
-        {
-          status: TransactionSetStatus.Archived,
-        }
-      )
-      .exec();
+    this.transactionSetModel.updateOne({ _id: transactionSetId }, {
+      status: TransactionSetStatus.Archived,
+    }).exec();
   }
 
   async getActiveTransactionSets(organizationId: string): Promise<Array<TransactionSet>> {
