@@ -30,6 +30,16 @@ export class TransactionSetService {
     return existedActiveTransactionSet;
   }
 
+  async archiveTransactionSet(transactionSetId: string): Promise<void> {
+    // @ts-ignore
+    this.transactionSetModel.updateOne({ _id: transactionSetId },
+        {
+          status: TransactionSetStatus.Archived,
+        }
+      )
+      .exec();
+  }
+
   async getActiveTransactionSets(organizationId: string): Promise<Array<TransactionSet>> {
     return await this.transactionSetModel.find({
       status: TransactionSetStatus.Active,
