@@ -7,7 +7,8 @@ import { Transaction } from '../entity/transaction';
 import { TransactionSet } from '../entity/transactionSet';
 import { TransactionSetService } from './transactionSet';
 import { CrawlerService } from './crawler';
-import dayjs = require('dayjs');
+const almostEqual = require('almost-equal');
+const dayjs = require('dayjs');
 
 export enum TRANSACTION_DIRECTION {
   BUY = 'BUY',
@@ -46,7 +47,8 @@ export class TransactionService {
         commission: transaction.commission,
       }))
     );
-    return volume === 0;
+    // 规避 -0 的场景，解决浮点数运算精度问题
+    return almostEqual(volume, 0, almostEqual.FLT_EPSILON, almostEqual.FLT_EPSILON);
   }
 
   async insertTransaction(
