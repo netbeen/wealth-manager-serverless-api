@@ -52,12 +52,10 @@ export class WealthHistoryService {
     if (!organization) {
       throw new Error('Params Error');
     }
-    // return null;
     const result = await this.wealthHistoryModel
       .find({
         organization,
-      })
-      .sort({ date: 'asc' });
+      }).sort({ date: 'desc' });
     return result ?? [];
   }
 }
