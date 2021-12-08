@@ -34,4 +34,30 @@ export class WealthHistoryService {
     });
     return result;
   }
+
+  async getLatestHistoryRecord(organization: string): Promise<WealthHistory | null> {
+    if (!organization) {
+      throw new Error('Params Error');
+    }
+    // return null;
+    const result = await this.wealthHistoryModel
+      .findOne({
+        organization,
+      })
+      .sort({ date: 'desc' });
+    return result ?? null;
+  }
+
+  async getAllHistoryRecord(organization: string): Promise<Array<WealthHistory>> {
+    if (!organization) {
+      throw new Error('Params Error');
+    }
+    // return null;
+    const result = await this.wealthHistoryModel
+      .find({
+        organization,
+      })
+      .sort({ date: 'asc' });
+    return result ?? [];
+  }
 }

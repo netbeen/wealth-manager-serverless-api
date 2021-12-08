@@ -30,4 +30,30 @@ export class WealthHistoryHTTPService {
     const insertResult = await this.wealthHistoryService.insertHistory(dayjs(date), detail, organization._id.toString());
     return response200(insertResult);
   }
+
+  @ServerlessTrigger(ServerlessTriggerType.HTTP, {
+    path: '/wealthHistory/latestRecord',
+    method: 'get',
+  })
+  async getLatestHistoryRecord(@Body() date: string, @Body() detail: { [key: string]: number }) {
+    const { result, errorResponse, organization } = await this.userService.checkLoginStatusAndOrganizationPermission(this.ctx.req.headers, OrganizationPermission.Visitor);
+    if (!result) {
+      return errorResponse;
+    }
+    const insertResult = await this.wealthHistoryService.getLatestHistoryRecord(organization._id.toString());
+    return response200(insertResult);
+  }
+
+  @ServerlessTrigger(ServerlessTriggerType.HTTP, {
+    path: '/wealthHistory/allRecord',
+    method: 'get',
+  })
+  async getAllHistoryRecord(@Body() date: string, @Body() detail: { [key: string]: number }) {
+    const { result, errorResponse, organization } = await this.userService.checkLoginStatusAndOrganizationPermission(this.ctx.req.headers, OrganizationPermission.Visitor);
+    if (!result) {
+      return errorResponse;
+    }
+    const insertResult = await this.wealthHistoryService.getAllHistoryRecord(organization._id.toString());
+    return response200(insertResult);
+  }
 }
