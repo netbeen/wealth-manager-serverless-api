@@ -27,7 +27,7 @@
     "cache-manager": "^3.6.0",
     "cache-manager-ioredis": "^2.1.0",
     "dayjs": "^1.10.7",
-    "fund-tools": "0.0.45",
+    "fund-tools": "0.0.47",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.13.13"
   },
