@@ -1,15 +1,7 @@
-import {
-  Inject,
-  Provide,
-  Query,
-  ServerlessTrigger,
-  ServerlessTriggerType,
-} from '@midwayjs/decorator';
+import { Inject, Provide, Query, ServerlessTrigger, ServerlessTriggerType } from '@midwayjs/decorator';
 import { Context } from '@midwayjs/faas';
 import { CacheManager } from '@midwayjs/cache';
-import {
-  response200,
-} from '../utils/response';
+import { response200, response400 } from '../utils/response';
 import { CrawlerService } from '../service/crawler';
 
 @Provide()
@@ -26,9 +18,7 @@ export class CrawlerHTTPService {
     method: 'get',
   })
   async fetchUnitPrice(@Query() identifier) {
-    const result = await this.crawlerService.fetchUnitPriceByIdentifier(
-      identifier
-    );
+    const result = await this.crawlerService.fetchUnitPriceByIdentifier(identifier);
     return response200(result);
   }
 
@@ -46,9 +36,7 @@ export class CrawlerHTTPService {
     method: 'get',
   })
   async fetchDividend(@Query() identifier) {
-    const result = await this.crawlerService.fetchDividendByIdentifier(
-      identifier
-    );
+    const result = await this.crawlerService.fetchDividendByIdentifier(identifier);
     return response200(result);
   }
 
@@ -57,9 +45,7 @@ export class CrawlerHTTPService {
     method: 'get',
   })
   async fetchBasicInfo(@Query() identifier) {
-    const result = await this.crawlerService.fetchBasicInfoByIdentifier(
-      identifier
-    );
+    const result = await this.crawlerService.fetchBasicInfoByIdentifier(identifier);
     return response200(result);
   }
 
@@ -68,6 +54,9 @@ export class CrawlerHTTPService {
     method: 'get',
   })
   async batchFetchBasicInfoUnitPriceSplitDividend(@Query() identifiersString) {
+    if (identifiersString.length === 0) {
+      return response400('Params Error');
+    }
     const identifiers = identifiersString.split(',');
     const data = await Promise.all([
       ...identifiers.map(identifier => this.crawlerService.fetchBasicInfoByIdentifier(identifier)),
