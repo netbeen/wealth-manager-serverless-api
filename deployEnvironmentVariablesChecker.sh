@@ -11,3 +11,8 @@ if [ -z "$UDEV_REDIS_PASSWORD" ]; then
   echo "Need to set Environment Variable: UDEV_REDIS_PASSWORD, the value is the password of redis"
   exit 1
 fi
+if [ -z "$UDEV_SMTP_PASSWORD" ]; then
+  echo "Need to set Environment Variable: UDEV_SMTP_PASSWORD, the value is the password of smtp service"
+  exit 1
+fi
+
