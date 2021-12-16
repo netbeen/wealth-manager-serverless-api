@@ -25,6 +25,11 @@ export const response400 = (message: string) => ({
   message,
 });
 
+export const response500 = (message: string) => ({
+  code: 500,
+  message,
+});
+
 export const getCacheFirstObjectResource = async (
   cacheInstance: CacheManager,
   cacheKey: string,
