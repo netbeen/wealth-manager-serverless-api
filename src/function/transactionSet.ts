@@ -25,16 +25,22 @@ export class TransactionSetHTTPService {
     method: 'get',
   })
   async getActiveTransactionSets(@Query() status) {
-    if (![TransactionSetStatus.Active, TransactionSetStatus.Archived].includes(status)) {
+    if (status && ![TransactionSetStatus.Active, TransactionSetStatus.Archived].includes(status)) {
       return response400('Params Error');
     }
     const { result, errorResponse, organization } = await this.userService.checkLoginStatusAndOrganizationPermission(this.ctx.req.headers, OrganizationPermission.Visitor);
     if (!result) {
       return errorResponse;
     }
-    return status === TransactionSetStatus.Archived
-      ? await this.transactionSetService.getArchivedTransactionSets(organization._id.toString())
-      : await this.transactionSetService.getActiveTransactionSets(organization._id.toString());
+    let returnResult: any = null;
+    if (!status) {
+      returnResult = await this.transactionSetService.getTransactionSets(organization._id.toString());
+    } else if (status === TransactionSetStatus.Archived) {
+      returnResult = await this.transactionSetService.getTransactionSets(organization._id.toString(), TransactionSetStatus.Archived);
+    } else {
+      returnResult = await this.transactionSetService.getTransactionSets(organization._id.toString(), TransactionSetStatus.Active);
+    }
+    return response200(returnResult);
   }
 
   @ServerlessTrigger(ServerlessTriggerType.HTTP, {

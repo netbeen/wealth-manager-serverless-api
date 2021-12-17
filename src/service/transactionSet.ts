@@ -1,7 +1,7 @@
-import { Provide } from "@midwayjs/decorator";
-import { InjectEntityModel } from "@midwayjs/typegoose";
-import { Model, Types } from "mongoose";
-import { TransactionSet } from "../entity/transactionSet";
+import { Provide } from '@midwayjs/decorator';
+import { InjectEntityModel } from '@midwayjs/typegoose';
+import { Model, Types } from 'mongoose';
+import { TransactionSet } from '../entity/transactionSet';
 
 export enum TransactionSetStatus {
   Active = 'active',
@@ -37,22 +37,21 @@ export class TransactionSetService {
 
   async archiveTransactionSet(transactionSetId: string): Promise<void> {
     // @ts-ignore
+    // eslint-disable-next-line prettier/prettier
     this.transactionSetModel.updateOne({ _id: transactionSetId }, {
-      status: TransactionSetStatus.Archived,
-    }).exec();
+          status: TransactionSetStatus.Archived,
+        }
+      )
+      .exec();
   }
 
-  async getActiveTransactionSets(organizationId: string): Promise<Array<TransactionSet>> {
-    return await this.transactionSetModel.find({
-      status: TransactionSetStatus.Active,
+  async getTransactionSets(organizationId: string, status?: TransactionSetStatus): Promise<Array<TransactionSet>> {
+    const query: { organization: string; status?: TransactionSetStatus } = {
       organization: organizationId,
-    });
-  }
-
-  async getArchivedTransactionSets(organizationId: string): Promise<Array<TransactionSet>> {
-    return await this.transactionSetModel.find({
-      status: TransactionSetStatus.Archived,
-      organization: organizationId,
-    });
+    };
+    if (status) {
+      query.status = status;
+    }
+    return await this.transactionSetModel.find(query);
   }
 }
