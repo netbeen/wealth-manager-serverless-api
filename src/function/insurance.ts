@@ -1,8 +1,9 @@
-import { Inject, Provide, ServerlessTrigger, ServerlessTriggerType } from '@midwayjs/decorator';
+import { Inject, Body, Provide, ServerlessTrigger, ServerlessTriggerType } from '@midwayjs/decorator';
 import { Context } from '@midwayjs/faas';
 import { response200, response500 } from '../utils/response';
 import { EmailService } from '../service/email';
 import { UserService } from '../service/user';
+import { InsuranceService } from '../service/insurance';
 import { OrganizationPermission } from '../service/organization';
 
 @Provide()
@@ -13,6 +14,8 @@ export class InsuranceHTTPService {
   emailService: EmailService;
   @Inject()
   userService: UserService;
+  @Inject()
+  insuranceService: InsuranceService;
 
   @ServerlessTrigger(ServerlessTriggerType.HTTP, {
     path: '/insurance/sendTestEmail',
@@ -27,6 +30,25 @@ export class InsuranceHTTPService {
       return response500('UserName is not valid Email');
     }
     const insertResult = await this.emailService.send(user.username, '您有保险即将续保，请注意扣款卡余额', 'Hello YY');
+    return response200(insertResult);
+  }
+
+  @ServerlessTrigger(ServerlessTriggerType.HTTP, {
+    path: '/insurance/insert',
+    method: 'post',
+  })
+  async insert(@Body() type, @Body() name, @Body() insured, @Body() insuredAmount, @Body() firstPaymentDate, @Body() paymentPlan, @Body() contractUrl) {
+    const { organization, result, errorResponse, user } = await this.userService.checkLoginStatusAndOrganizationPermission(
+      this.ctx.req.headers,
+      OrganizationPermission.Collaborator
+    );
+    if (!result) {
+      return errorResponse;
+    }
+    if (!/\w+@\w+/.test(user.username)) {
+      return response500('UserName is not valid Email');
+    }
+    const insertResult = await this.insuranceService.insert(type, name, insured, insuredAmount, firstPaymentDate, paymentPlan, contractUrl, organization._id.toString());
     return response200(insertResult);
   }
 }
