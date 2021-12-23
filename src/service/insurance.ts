@@ -37,7 +37,18 @@ export class InsuranceService {
         organization,
       });
     } catch (e) {
-      console.log(e);
+      throw new Error(e);
+    }
+  }
+
+  async getList(
+    organization: string
+  ): Promise<Array<Insurance>> {
+    try {
+      return await this.insuranceModel.find({
+        organization,
+      });
+    } catch (e) {
       throw new Error(e);
     }
   }

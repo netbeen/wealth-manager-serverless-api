@@ -38,17 +38,30 @@ export class InsuranceHTTPService {
     method: 'post',
   })
   async insert(@Body() type, @Body() name, @Body() insured, @Body() insuredAmount, @Body() firstPaymentDate, @Body() paymentPlan, @Body() contractUrl) {
-    const { organization, result, errorResponse, user } = await this.userService.checkLoginStatusAndOrganizationPermission(
+    const { organization, result, errorResponse } = await this.userService.checkLoginStatusAndOrganizationPermission(
       this.ctx.req.headers,
       OrganizationPermission.Collaborator
     );
     if (!result) {
       return errorResponse;
     }
-    if (!/\w+@\w+/.test(user.username)) {
-      return response500('UserName is not valid Email');
-    }
     const insertResult = await this.insuranceService.insert(type, name, insured, insuredAmount, firstPaymentDate, paymentPlan, contractUrl, organization._id.toString());
+    return response200(insertResult);
+  }
+
+  @ServerlessTrigger(ServerlessTriggerType.HTTP, {
+    path: '/insurance/list',
+    method: 'get',
+  })
+  async getList() {
+    const { organization, result, errorResponse } = await this.userService.checkLoginStatusAndOrganizationPermission(
+      this.ctx.req.headers,
+      OrganizationPermission.Collaborator
+    );
+    if (!result) {
+      return errorResponse;
+    }
+    const insertResult = await this.insuranceService.getList(organization._id.toString());
     return response200(insertResult);
   }
 }
