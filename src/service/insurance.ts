@@ -52,4 +52,16 @@ export class InsuranceService {
       throw new Error(e);
     }
   }
+
+  async getById(
+    organization: string,
+    id: string
+  ): Promise<Insurance> {
+    try {
+      // @ts-ignore
+      return await this.insuranceModel.findOne({ organization, _id: id, });
+    } catch (e) {
+      throw new Error(e);
+    }
+  }
 }
