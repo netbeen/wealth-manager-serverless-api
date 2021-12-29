@@ -54,8 +54,8 @@ export class InsuranceService {
   }
 
   async getById(
+    id: string,
     organization: string,
-    id: string
   ): Promise<Insurance> {
     try {
       // @ts-ignore

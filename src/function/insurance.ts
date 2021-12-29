@@ -1,4 +1,4 @@
-import { Inject, Body, Provide, ServerlessTrigger, ServerlessTriggerType } from '@midwayjs/decorator';
+import { Inject, Body, Query, Provide, ServerlessTrigger, ServerlessTriggerType } from '@midwayjs/decorator';
 import { Context } from '@midwayjs/faas';
 import { response200, response500 } from '../utils/response';
 import { EmailService } from '../service/email';
@@ -38,10 +38,7 @@ export class InsuranceHTTPService {
     method: 'post',
   })
   async insert(@Body() type, @Body() name, @Body() insured, @Body() insuredAmount, @Body() firstPaymentDate, @Body() paymentPlan, @Body() contractUrl) {
-    const { organization, result, errorResponse } = await this.userService.checkLoginStatusAndOrganizationPermission(
-      this.ctx.req.headers,
-      OrganizationPermission.Collaborator
-    );
+    const { organization, result, errorResponse } = await this.userService.checkLoginStatusAndOrganizationPermission(this.ctx.req.headers, OrganizationPermission.Collaborator);
     if (!result) {
       return errorResponse;
     }
@@ -54,14 +51,24 @@ export class InsuranceHTTPService {
     method: 'get',
   })
   async getList() {
-    const { organization, result, errorResponse } = await this.userService.checkLoginStatusAndOrganizationPermission(
-      this.ctx.req.headers,
-      OrganizationPermission.Collaborator
-    );
+    const { organization, result, errorResponse } = await this.userService.checkLoginStatusAndOrganizationPermission(this.ctx.req.headers, OrganizationPermission.Collaborator);
     if (!result) {
       return errorResponse;
     }
     const insertResult = await this.insuranceService.getList(organization._id.toString());
+    return response200(insertResult);
+  }
+
+  @ServerlessTrigger(ServerlessTriggerType.HTTP, {
+    path: '/insurance/getById',
+    method: 'get',
+  })
+  async getById(@Query() id) {
+    const { organization, result, errorResponse } = await this.userService.checkLoginStatusAndOrganizationPermission(this.ctx.req.headers, OrganizationPermission.Collaborator);
+    if (!result) {
+      return errorResponse;
+    }
+    const insertResult = await this.insuranceService.getById(id, organization._id.toString());
     return response200(insertResult);
   }
 }
