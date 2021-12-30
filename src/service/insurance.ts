@@ -53,6 +53,11 @@ export class InsuranceService {
     }
   }
 
+  /**
+   * 通过ID获取保险记录
+   * @param id
+   * @param organization
+   */
   async getById(
     id: string,
     organization: string,
