@@ -41,9 +41,11 @@ export class InsuranceService {
     }
   }
 
-  async getList(
-    organization: string
-  ): Promise<Array<Insurance>> {
+  /**
+   * 获取保险记录列表
+   * @param organization
+   */
+  async getList(organization: string): Promise<Array<Insurance>> {
     try {
       return await this.insuranceModel.find({
         organization,
@@ -58,13 +60,10 @@ export class InsuranceService {
    * @param id
    * @param organization
    */
-  async getById(
-    id: string,
-    organization: string,
-  ): Promise<Insurance> {
+  async getById(id: string, organization: string): Promise<Insurance> {
     try {
       // @ts-ignore
-      return await this.insuranceModel.findOne({ organization, _id: id, });
+      return await this.insuranceModel.findOne({ organization, _id: id });
     } catch (e) {
       throw new Error(e);
     }
