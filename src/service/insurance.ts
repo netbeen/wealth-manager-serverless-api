@@ -14,6 +14,17 @@ export class InsuranceService {
   @Inject()
   organizationService: OrganizationService;
 
+  /**
+   * 增加保险记录
+   * @param type
+   * @param name
+   * @param insured
+   * @param insuredAmount
+   * @param firstPaymentDate
+   * @param paymentPlan
+   * @param contractUrl
+   * @param organization
+   */
   async insert(
     type: string,
     name: string,
