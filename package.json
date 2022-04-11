@@ -12,7 +12,7 @@
   "scripts": {
     "dev": "sh devEnvironmentVariablesChecker.sh && cross-env NODE_ENV=local midway-bin dev --ts --port=5002",
     "test": "cross-env midway-bin test --ts",
-    "deploy": "sh deployEnvironmentVariablesChecker.sh && cross-env UDEV_NODE_ENV=production midway-bin deploy",
+    "deploy": "sh deployEnvironmentVariablesChecker.sh && cross-env UDEV_NODE_ENV=production midway-bin deploy --npm=npm",
     "lint": "mwts check",
     "lint:fix": "mwts fix"
   },
@@ -40,6 +40,7 @@
     "@midwayjs/mock": "^2.8.7",
     "@midwayjs/serverless-app": "^2.13.4",
     "@midwayjs/serverless-fc-trigger": "^2.10.3",
+    "@midwayjs/serverless-scf-starter": "2",
     "@midwayjs/serverless-scf-trigger": "^2.10.3",
     "@types/cache-manager": "^3.4.2",
     "@types/jest": "^26.0.10",
