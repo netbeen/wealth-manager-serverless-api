@@ -27,9 +27,7 @@ export class OrganizationService {
     permissions: OrganizationPermissionType['permissions'];
   }> {
     try {
-      const result = await this.organizationModel
-        .findById(organizationIdFromToken)
-        .exec();
+      const result = await this.organizationModel.findById(organizationIdFromToken).exec();
       const permissions: OrganizationPermissionType['permissions'] = [];
       if (result.adminList.includes(userId)) {
         permissions.push(OrganizationPermission.Admin);
@@ -53,19 +51,15 @@ export class OrganizationService {
     }
   }
 
-  async createOrganization(
-    name: string,
-    userId: string
-  ): Promise<Organization> {
+  async createOrganization(name: string, userId: string): Promise<Organization> {
     try {
-      const result = await this.organizationModel.create({
+      return await this.organizationModel.create({
         _id: new Types.ObjectId(),
         name,
         adminList: [userId],
         collaboratorList: [],
         visitorList: [],
       });
-      return result;
     } catch (e) {
       console.log(e);
       throw new Error(e);

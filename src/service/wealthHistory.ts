@@ -26,13 +26,12 @@ export class WealthHistoryService {
     if (!date || !detail || !organization) {
       throw new Error('Params Error');
     }
-    const result = await this.wealthHistoryModel.create({
+    return await this.wealthHistoryModel.create({
       _id: new Types.ObjectId(),
       date: date.format(),
       detail,
       organization,
     });
-    return result;
   }
 
   async getLatestHistoryRecord(organization: string): Promise<WealthHistory | null> {
@@ -55,7 +54,8 @@ export class WealthHistoryService {
     const result = await this.wealthHistoryModel
       .find({
         organization,
-      }).sort({ date: 'desc' });
+      })
+      .sort({ date: 'desc' });
     return result ?? [];
   }
 }

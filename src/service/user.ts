@@ -39,38 +39,19 @@ export class UserService {
         permissionList: [],
       };
     }
-    const organizationData =
-      await this.organizationService.getAndVerifyOrganizationFromToken(
-        headers['x-wm-organization'],
-        loginUser._id.toString()
-      );
+    const organizationData = await this.organizationService.getAndVerifyOrganizationFromToken(headers['x-wm-organization'], loginUser._id.toString());
     if (minimumRequiredPermission) {
       if (
         (minimumRequiredPermission === OrganizationPermission.Visitor &&
-          organizationData.permissions.filter(item =>
-            [
-              OrganizationPermission.Visitor,
-              OrganizationPermission.Collaborator,
-              OrganizationPermission.Admin,
-            ].includes(item)
-          ).length === 0) ||
+          organizationData.permissions.filter(item => [OrganizationPermission.Visitor, OrganizationPermission.Collaborator, OrganizationPermission.Admin].includes(item)).length ===
+            0) ||
         (minimumRequiredPermission === OrganizationPermission.Collaborator &&
-          organizationData.permissions.filter(item =>
-            [
-              OrganizationPermission.Collaborator,
-              OrganizationPermission.Admin,
-            ].includes(item)
-          ).length === 0) ||
-        (minimumRequiredPermission === OrganizationPermission.Admin &&
-          organizationData.permissions.filter(item =>
-            [OrganizationPermission.Admin].includes(item)
-          ).length === 0)
+          organizationData.permissions.filter(item => [OrganizationPermission.Collaborator, OrganizationPermission.Admin].includes(item)).length === 0) ||
+        (minimumRequiredPermission === OrganizationPermission.Admin && organizationData.permissions.filter(item => [OrganizationPermission.Admin].includes(item)).length === 0)
       ) {
         return {
           result: false,
-          errorResponse: response403(
-            `You don't have the ${minimumRequiredPermission} permission in organization: ${organizationData.organization.name}`
-          ),
+          errorResponse: response403(`You don't have the ${minimumRequiredPermission} permission in organization: ${organizationData.organization.name}`),
           user: loginUser,
           organization: organizationData.organization,
           permissionList: organizationData.permissions,
@@ -104,10 +85,7 @@ export class UserService {
         username,
         passwordHash,
       });
-      await this.organizationService.createOrganization(
-        `${username}的账本`,
-        result._id.toString()
-      );
+      await this.organizationService.createOrganization(`${username}的账本`, result._id.toString());
       return result;
     } catch (e) {
       console.log(e);

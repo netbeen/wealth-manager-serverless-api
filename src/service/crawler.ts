@@ -3,7 +3,7 @@ import { InjectEntityModel } from '@midwayjs/typegoose';
 import { Model } from 'mongoose';
 import { Organization } from '../entity/organization';
 import { Dayjs } from 'dayjs';
-import { fetchSplitByIdentifier, fetchUnitPriceByIdentifier, fetchDividendByIdentifier, fetchBasicInfoByIdentifier } from 'fund-tools';
+import { fetchBasicInfoByIdentifier, fetchDividendByIdentifier, fetchSplitByIdentifier, fetchUnitPriceByIdentifier } from 'fund-tools';
 import { getCacheFirstArrayResource, getCacheFirstObjectResource } from '../utils/response';
 import { CacheManager } from '@midwayjs/cache';
 
@@ -60,7 +60,6 @@ export class CrawlerService {
   }
 
   public async fetchBasicInfoByIdentifier(identifier: string): Promise<BasicInfoType> {
-    const result = (await getCacheFirstObjectResource(this.cache, `fetchBasicInfoByIdentifier${identifier}`, fetchBasicInfoByIdentifier(identifier), 3600)) as BasicInfoType;
-    return result;
+    return (await getCacheFirstObjectResource(this.cache, `fetchBasicInfoByIdentifier${identifier}`, fetchBasicInfoByIdentifier(identifier), 3600)) as BasicInfoType;
   }
 }

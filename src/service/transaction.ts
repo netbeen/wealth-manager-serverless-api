@@ -29,7 +29,6 @@ export class TransactionService {
   /**
    * 判断当前交易后，该基金是否已经清仓，即这一阶段的投资旅程是否结束
    * @param transactionSet
-   * @param sellVolume
    */
   async isZeroVolume(transactionSet: TransactionSet): Promise<boolean> {
     const transactions = await this.findTransaction(transactionSet._id.toString());
