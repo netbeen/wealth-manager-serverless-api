@@ -2,11 +2,10 @@ service:
   name: wealth-manager-serverless-api
 
 provider:
-  name: tencent
-  runtime: nodejs12
-  timeout: 60 # 单位秒
-  region: ap-hongkong
-  serviceId: service-0d8643vs
+  name: aliyun
+  runtime: nodejs14
+  timeout: 600 # 单位秒
+  region: cn-hangzhou
 
 aggregation:
   all:
