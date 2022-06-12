@@ -51,7 +51,7 @@ export class InsuranceHTTPService {
     method: 'get',
   })
   async getList() {
-    const { organization, result, errorResponse } = await this.userService.checkLoginStatusAndOrganizationPermission(this.ctx.req.headers, OrganizationPermission.Collaborator);
+    const { organization, result, errorResponse } = await this.userService.checkLoginStatusAndOrganizationPermission(this.ctx.req.headers, OrganizationPermission.Visitor);
     if (!result) {
       return errorResponse;
     }
