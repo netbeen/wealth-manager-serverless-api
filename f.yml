@@ -4,6 +4,7 @@ service:
 provider:
   name: aliyun
   runtime: nodejs14
+  memorySize: 512
   timeout: 600 # 单位秒
   region: cn-hangzhou
 
