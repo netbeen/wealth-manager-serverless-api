@@ -1,10 +1,4 @@
-import {
-  Provide,
-  Inject,
-  ServerlessTrigger,
-  ServerlessTriggerType,
-  Query,
-} from '@midwayjs/decorator';
+import { Provide, Inject, ServerlessTrigger, ServerlessTriggerType, Query } from '@midwayjs/decorator';
 import { Context } from '@midwayjs/faas';
 
 @Provide()
@@ -16,7 +10,7 @@ export class IndexHTTPService {
     path: '/',
     method: 'get',
   })
-  async handleHTTPEvent(@Query() name = 'midwayjs') {
+  async handleHTTPEvent(@Query() { name = 'midwayjs' }) {
     return `Hello ${name}`;
   }
 }

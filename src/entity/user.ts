@@ -1,15 +1,13 @@
 import { prop } from '@typegoose/typegoose';
-import { EntityModel } from '@midwayjs/typegoose';
 import { Schema } from 'mongoose';
 
-@EntityModel()
 export class User {
   @prop()
   public _id: Schema.Types.ObjectId;
 
-  @prop()
-  public username: string;
+  @prop({ type: () => String })
+  public username?: string;
 
-  @prop()
-  public passwordHash: string;
+  @prop({ type: () => String })
+  public passwordHash?: string;
 }

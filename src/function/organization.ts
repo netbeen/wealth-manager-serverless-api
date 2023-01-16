@@ -1,20 +1,10 @@
-import {
-  ALL,
-  Config,
-  Inject,
-  Provide,
-  ServerlessTrigger,
-  ServerlessTriggerType,
-} from '@midwayjs/decorator';
+import { ALL, Config, Inject, Provide, ServerlessTrigger, ServerlessTriggerType } from '@midwayjs/decorator';
 import { Context } from '@midwayjs/faas';
 import { Model } from 'mongoose';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { response200, response404 } from '../utils/response';
 import { UserService } from '../service/user';
-import {
-  OrganizationPermission,
-  OrganizationService,
-} from '../service/organization';
+import { OrganizationPermission, OrganizationService } from '../service/organization';
 import { Organization } from '../entity/organization';
 
 @Provide()
@@ -35,36 +25,18 @@ export class OrganizationHTTPService {
     method: 'get',
   })
   async getAvailableOrganizations() {
-    const { result, errorResponse, user } =
-      await this.userService.checkLoginStatusAndOrganizationPermission(
-        this.ctx.req.headers,
-        null
-      );
+    const { result, errorResponse, user } = await this.userService.checkLoginStatusAndOrganizationPermission(this.ctx.req.headers, null);
     if (!result) {
       return errorResponse;
     }
 
     try {
-      const [
-        adminOrganizations,
-        collaboratorOrganizations,
-        visitorOrganizations,
-      ] = await Promise.all([
+      const [adminOrganizations, collaboratorOrganizations, visitorOrganizations] = await Promise.all([
         this.organizationModel.find({ adminList: user._id.toString() }).exec(),
-        this.organizationModel
-          .find({ collaboratorList: user._id.toString() })
-          .exec(),
-        this.organizationModel
-          .find({ visitorList: user._id.toString() })
-          .exec(),
+        this.organizationModel.find({ collaboratorList: user._id.toString() }).exec(),
+        this.organizationModel.find({ visitorList: user._id.toString() }).exec(),
       ]);
-      return response200(
-        [
-          ...adminOrganizations,
-          ...collaboratorOrganizations,
-          ...visitorOrganizations,
-        ].map(item => ({ name: item.name, _id: item._id }))
-      );
+      return response200([...adminOrganizations, ...collaboratorOrganizations, ...visitorOrganizations].map(item => ({ name: item.name, _id: item._id })));
     } catch (e) {
       return response404('');
     }
@@ -75,11 +47,10 @@ export class OrganizationHTTPService {
     method: 'get',
   })
   async getCurrentOrganization() {
-    const { result, errorResponse, organization, permissionList } =
-      await this.userService.checkLoginStatusAndOrganizationPermission(
-        this.ctx.req.headers,
-        OrganizationPermission.Visitor
-      );
+    const { result, errorResponse, organization, permissionList } = await this.userService.checkLoginStatusAndOrganizationPermission(
+      this.ctx.req.headers,
+      OrganizationPermission.Visitor
+    );
     if (!result) {
       return errorResponse;
     }

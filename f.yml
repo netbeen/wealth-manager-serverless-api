@@ -10,5 +10,7 @@ provider:
 
 aggregation:
   all:
+    timeout: 600 # 单位秒
+    memorySize: 512
     functionsPattern:
       '*'

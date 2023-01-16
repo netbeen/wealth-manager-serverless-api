@@ -1,8 +1,6 @@
 import { prop } from '@typegoose/typegoose';
-import { EntityModel } from '@midwayjs/typegoose';
 import { Schema } from 'mongoose';
 
-@EntityModel()
 export class Transaction {
   @prop()
   public _id: Schema.Types.ObjectId;

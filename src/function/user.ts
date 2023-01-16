@@ -1,15 +1,9 @@
-import {
-  Provide,
-  Inject,
-  ServerlessTrigger,
-  ServerlessTriggerType,
-  Body,
-} from '@midwayjs/decorator';
+import { Provide, Inject, ServerlessTrigger, ServerlessTriggerType, Body } from '@midwayjs/decorator';
 import { Context } from '@midwayjs/faas';
-import { Model } from 'mongoose';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { User } from '../entity/user';
 import { response200, response404 } from '../utils/response';
+import { ReturnModelType } from '@typegoose/typegoose';
 import { UserService } from '../service/user';
 const jwt = require('jsonwebtoken');
 
@@ -17,8 +11,10 @@ const jwt = require('jsonwebtoken');
 export class UserHTTPService {
   @Inject()
   ctx: Context;
+
   @InjectEntityModel(User)
-  userModel: Model<User>;
+  userModel: ReturnModelType<typeof User>;
+
   @Inject()
   userService: UserService;
 
@@ -27,11 +23,7 @@ export class UserHTTPService {
     method: 'get',
   })
   async getByIdentifier() {
-    const { result, errorResponse, user } =
-      await this.userService.checkLoginStatusAndOrganizationPermission(
-        this.ctx.headers,
-        null
-      );
+    const { result, errorResponse, user } = await this.userService.checkLoginStatusAndOrganizationPermission(this.ctx.headers, null);
     if (!result) {
       return errorResponse;
     }
@@ -42,39 +34,29 @@ export class UserHTTPService {
     path: '/user/login',
     method: 'post',
   })
-  async login(@Body() username, @Body() passwordHash) {
-    try {
-      const user = await this.userModel
-        .findOne({ username, passwordHash })
-        .exec();
-      if (!user || !user.username) {
-        return response404('');
-      }
-      return response200({
-        _id: user._id,
-        username: user.username,
-        token: jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
-          expiresIn: '365d',
-        }),
-      });
-    } catch (e) {
+  async login(@Body() { username, passwordHash }) {
+    const user = await this.userModel.findOne({ username, passwordHash }).exec();
+    if (!user || !user.username) {
       return response404('');
     }
+    return response200({
+      _id: user._id,
+      username: user.username,
+      token: jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+        expiresIn: '365d',
+      }),
+    });
   }
 
   @ServerlessTrigger(ServerlessTriggerType.HTTP, {
     path: '/user/register',
     method: 'post',
   })
-  async register(@Body() username, @Body() passwordHash) {
-    try {
-      const user = await this.userService.register(username, passwordHash);
-      return response200({
-        _id: user._id,
-        username: user.username,
-      });
-    } catch (e) {
-      return response404('');
-    }
+  async register(@Body() { username, passwordHash }) {
+    const user = await this.userService.register(username, passwordHash);
+    return response200({
+      _id: user._id,
+      username: user.username,
+    });
   }
 }

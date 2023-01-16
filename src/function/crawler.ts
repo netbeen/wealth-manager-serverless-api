@@ -17,7 +17,7 @@ export class CrawlerHTTPService {
     path: '/fund/unitPrice',
     method: 'get',
   })
-  async fetchUnitPrice(@Query() identifier) {
+  async fetchUnitPrice(@Query() { identifier }) {
     const result = await this.crawlerService.fetchUnitPriceByIdentifier(identifier);
     return response200(result);
   }
@@ -26,7 +26,7 @@ export class CrawlerHTTPService {
     path: '/fund/split',
     method: 'get',
   })
-  async fetchSplit(@Query() identifier) {
+  async fetchSplit(@Query() { identifier }) {
     const result = await this.crawlerService.fetchSplitByIdentifier(identifier);
     return response200(result);
   }
@@ -35,7 +35,7 @@ export class CrawlerHTTPService {
     path: '/fund/dividend',
     method: 'get',
   })
-  async fetchDividend(@Query() identifier) {
+  async fetchDividend(@Query() { identifier }) {
     const result = await this.crawlerService.fetchDividendByIdentifier(identifier);
     return response200(result);
   }
@@ -44,7 +44,7 @@ export class CrawlerHTTPService {
     path: '/fund/basicInfo',
     method: 'get',
   })
-  async fetchBasicInfo(@Query() identifier) {
+  async fetchBasicInfo(@Query() { identifier }) {
     const result = await this.crawlerService.fetchBasicInfoByIdentifier(identifier);
     return response200(result);
   }
@@ -53,7 +53,7 @@ export class CrawlerHTTPService {
     path: '/fund/basicInfoUnitPriceSplitDividend/batchQuery',
     method: 'get',
   })
-  async batchFetchBasicInfoUnitPriceSplitDividend(@Query() identifiersString) {
+  async batchFetchBasicInfoUnitPriceSplitDividend(@Query() { identifiersString }) {
     if (identifiersString.length === 0) {
       return response400('Params Error');
     }

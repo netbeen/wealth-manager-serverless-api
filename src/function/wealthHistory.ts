@@ -22,7 +22,8 @@ export class WealthHistoryHTTPService {
     path: '/wealthHistory/create',
     method: 'post',
   })
-  async createHistoryRecord(@Body() date: string, @Body() detail: { [key: string]: number }) {
+  // async createHistoryRecord(@Body() date: string, @Body() detail: { [key: string]: number }) {
+  async createHistoryRecord(@Body() { date, detail }) {
     const { result, errorResponse, organization } = await this.userService.checkLoginStatusAndOrganizationPermission(this.ctx.req.headers, OrganizationPermission.Collaborator);
     if (!result) {
       return errorResponse;
@@ -35,7 +36,7 @@ export class WealthHistoryHTTPService {
     path: '/wealthHistory/latestRecord',
     method: 'get',
   })
-  async getLatestHistoryRecord(@Body() date: string, @Body() detail: { [key: string]: number }) {
+  async getLatestHistoryRecord() {
     const { result, errorResponse, organization } = await this.userService.checkLoginStatusAndOrganizationPermission(this.ctx.req.headers, OrganizationPermission.Visitor);
     if (!result) {
       return errorResponse;
@@ -48,7 +49,7 @@ export class WealthHistoryHTTPService {
     path: '/wealthHistory/allRecord',
     method: 'get',
   })
-  async getAllHistoryRecord(@Body() date: string, @Body() detail: { [key: string]: number }) {
+  async getAllHistoryRecord() {
     const { result, errorResponse, organization } = await this.userService.checkLoginStatusAndOrganizationPermission(this.ctx.req.headers, OrganizationPermission.Visitor);
     if (!result) {
       return errorResponse;

@@ -37,7 +37,8 @@ export class InsuranceHTTPService {
     path: '/insurance/insert',
     method: 'post',
   })
-  async insert(@Body() type, @Body() name, @Body() insured, @Body() insuredAmount, @Body() firstPaymentDate, @Body() paymentPlan, @Body() contractUrl) {
+  // async insert(@Body() type, @Body() name, @Body() insured, @Body() insuredAmount, @Body() firstPaymentDate, @Body() paymentPlan, @Body() contractUrl) {
+  async insert(@Body() { type, name, insured, insuredAmount, firstPaymentDate, paymentPlan, contractUrl }) {
     const { organization, result, errorResponse } = await this.userService.checkLoginStatusAndOrganizationPermission(this.ctx.req.headers, OrganizationPermission.Collaborator);
     if (!result) {
       return errorResponse;
@@ -63,7 +64,7 @@ export class InsuranceHTTPService {
     path: '/insurance/getById',
     method: 'get',
   })
-  async getById(@Query() id) {
+  async getById(@Query() { id }) {
     const { organization, result, errorResponse } = await this.userService.checkLoginStatusAndOrganizationPermission(this.ctx.req.headers, OrganizationPermission.Visitor);
     if (!result) {
       return errorResponse;

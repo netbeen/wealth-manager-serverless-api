@@ -24,7 +24,7 @@ export class TransactionSetHTTPService {
     path: '/fund/transactionSet',
     method: 'get',
   })
-  async getActiveTransactionSets(@Query() status) {
+  async getActiveTransactionSets(@Query() { status }) {
     if (status && ![TransactionSetStatus.Active, TransactionSetStatus.Archived].includes(status)) {
       return response400('Params Error');
     }
@@ -47,7 +47,7 @@ export class TransactionSetHTTPService {
     path: '/fund/getTransactionSetById',
     method: 'get',
   })
-  async getTransactionSetById(@Query() id) {
+  async getTransactionSetById(@Query() { id }) {
     const { result, errorResponse, organization } = await this.userService.checkLoginStatusAndOrganizationPermission(this.ctx.req.headers, OrganizationPermission.Visitor);
     if (!result) {
       return errorResponse;
