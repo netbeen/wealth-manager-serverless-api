@@ -1,0 +1,9 @@
+{
+  "serviceName": "wealth-manager-serverless-api",
+  "functionNames": [
+    "wealth-manager-serverless-api/all"
+  ],
+  "domains": [
+    "all.wealth-manager-serverless-api.1140218872552021.cn-hongkong.fc.devsapp.net"
+  ]
+}
